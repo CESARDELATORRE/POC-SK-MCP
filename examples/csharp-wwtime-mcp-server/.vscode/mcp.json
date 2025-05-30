@@ -1,0 +1,9 @@
+{
+    "servers": {
+        "cesar-mcp-server-worldtime": {
+            "type": "stdio",
+            "command": "E:\\github-repos\\POC-SK-MCP-master\\examples\\csharp-wwtime-mcp-server\\csharp-wwtime-mcp-server\\bin\\Debug\\net9.0\\csharp-wwtime-mcp-server.exe",
+            "args": []
+        }
+    }
+}

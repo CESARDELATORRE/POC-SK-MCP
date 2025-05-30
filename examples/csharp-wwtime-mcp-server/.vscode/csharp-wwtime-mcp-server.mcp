@@ -1,0 +1,21 @@
+{
+  "name": "cesar-mcp-server-worldtime",
+  "description": "A C# MCP server for echo and reverse echo tools.",
+  "entryPoint": "${workspaceFolder}/bin/Debug/net9.0/csharp-wwtime-mcp-server.exe",
+  "transport": "stdio",
+  "languages": ["csharp"],
+  "tools": [
+    {
+      "name": "Echo",
+      "description": "Echoes the message back to the client."
+    },
+    {
+      "name": "ReverseEcho",
+      "description": "Echoes in reverse the message sent."
+    },
+    {
+      "name": "GetCurrentLocalTime",
+      "description": "Returns the current local time."
+    }
+  ]
+}

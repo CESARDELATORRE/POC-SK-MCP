@@ -1,0 +1,28 @@
+{
+    "mcpServers": {
+        "sk": {
+            "command": "uv",
+            "args": [
+                "--directory=./examples/mcp-sk/mcp_server",
+                "run",
+                "sk_mcp_server.py"
+            ],
+            "env": {
+                "OPENAI_API_KEY": "2ekgfLpxhhZSe4ffl7SvAatL1LFluh1UeoQ11Q4XNuRVko80xispJQQJ99BEACYeBjFXJ3w3AAAAACOGYlnD",
+                "OPENAI_CHAT_MODEL_ID": "gpt-4o-mini"
+            }
+        },
+        "agent": {
+            "command": "uv",
+            "args": [
+                "--directory=./examples/mcp-sk/mcp_server",
+                "run",
+                "agent_mcp_server.py"
+            ],
+            "env": {
+                "AZURE_AI_AGENT_PROJECT_CONNECTION_STRING": "<your azure connection string>",
+                "AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME": "<your azure model deployment name>"
+            }
+        }
+    }
+}

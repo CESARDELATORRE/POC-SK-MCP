@@ -1,0 +1,14 @@
+{
+    "servers": {
+        "agent-step-1-sk-mcp-csharp-mcp-server": {
+            "type": "stdio",
+            "command": "e:\\github-repos\\POC-SK-MCP-master\\sk-mcp-hollow-poc\\agent-step-1-sk-mcp-csharp\\bin\\Debug\\net9.0\\agent-step-1-sk-mcp-csharp.exe",
+            "args": []
+        },
+        "orchestration-agent-sk-mcp-csharp": {
+            "type": "stdio",
+            "command": "E:\\github-repos\\POC-SK-MCP-master\\sk-mcp-hollow-poc\\orchestration-agent-sk-mcp-csharp\\bin\\Debug\\net9.0\\orchestration-agent-sk-mcp-csharp.exe",
+            "args": []
+        }
+    }
+}
