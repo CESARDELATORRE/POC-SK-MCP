@@ -2,5 +2,6 @@
 
 ## POC 1: 
 
-![image](https://github.com/user-attachments/assets/56642961-bedd-4539-aae9-abc30ed500ea)
+![image](https://github.com/user-attachments/assets/e3190d31-530d-4928-bac5-98af187aebc6)
+
 
