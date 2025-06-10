@@ -76,11 +76,10 @@ public static class WorkflowOrchestratorTool
         result.AppendLine($"AzureOpenAI:DeploymentName: {deploymentName}");
         result.AppendLine($"AzureOpenAI:ApiKey: {apiKey}");
 
+        result.AppendLine($"Base Directory of Orchestrator: {AppContext.BaseDirectory}");
 
-        // Create the path to the MCP client executable from relative path
-        //string mcpClientFilePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../agent-step-1-sk-mcp-csharp/bin/Debug/net9.0/agent-step-1-sk-mcp-csharp.exe"));
-        //Console.WriteLine($"MCP Client path: {mcpClientFilePath}");
-        //result.AppendLine($"MCP Client path: {mcpClientFilePath}");
+        string mcpClientFilePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..", "agent-step-1-sk-mcp-csharp/bin/Debug/net9.0/agent-step-1-sk-mcp-csharp.exe"));
+        result.AppendLine($"MCP Client FilePath: {mcpClientFilePath}");
 
         // Create MCP client
         await using IMcpClient mcpClientStep1 = await McpClientFactory.CreateAsync(
@@ -88,7 +87,7 @@ public static class WorkflowOrchestratorTool
             new()
             {
                 Name = "agent-step-1-sk-mcp-csharp",
-                Command = "e:\\github-repos\\POC-SK-MCP-master\\sk-mcp-hollow-poc\\agent-step-1-sk-mcp-csharp\\bin\\Debug\\net9.0\\agent-step-1-sk-mcp-csharp.exe",
+                Command = mcpClientFilePath,  
                 Arguments = Array.Empty<string>()
             }));
 
