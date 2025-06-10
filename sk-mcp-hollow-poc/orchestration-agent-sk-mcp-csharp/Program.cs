@@ -48,6 +48,8 @@ public static class WorkflowOrchestratorTool
                         .AddEnvironmentVariables()
                         .Build();
 
+        var result = new StringBuilder();
+
         if (config["AzureOpenAI:ApiKey"] is not { } apiKey)
         {
             string error = "Please provide a valid AzureOpenAI:ApiKey to run this sample.";
@@ -69,19 +71,31 @@ public static class WorkflowOrchestratorTool
             return error;
         }
 
+        // Check env vars
+        result.AppendLine($"AzureOpenAI:Endpoint: {endpoint}" );
+        result.AppendLine($"AzureOpenAI:DeploymentName: {deploymentName}");
+        result.AppendLine($"AzureOpenAI:ApiKey: {apiKey}");
+
+
+        // Create the path to the MCP client executable from relative path
+        //string mcpClientFilePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../agent-step-1-sk-mcp-csharp/bin/Debug/net9.0/agent-step-1-sk-mcp-csharp.exe"));
+        //Console.WriteLine($"MCP Client path: {mcpClientFilePath}");
+        //result.AppendLine($"MCP Client path: {mcpClientFilePath}");
 
         // Create MCP client
-        await using IMcpClient mcpClientStep1 = await McpClientFactory.CreateAsync(new StdioClientTransport(new()
-        {
-            Name = "agent-step-1-sk-mcp-csharp",
-            Command = "e:\\github-repos\\POC-SK-MCP-master\\sk-mcp-hollow-poc\\agent-step-1-sk-mcp-csharp\\bin\\Debug\\net9.0\\agent-step-1-sk-mcp-csharp.exe",
-            Arguments = Array.Empty<string>()
-        }));
+        await using IMcpClient mcpClientStep1 = await McpClientFactory.CreateAsync(
+                                                        new StdioClientTransport(
+            new()
+            {
+                Name = "agent-step-1-sk-mcp-csharp",
+                Command = "e:\\github-repos\\POC-SK-MCP-master\\sk-mcp-hollow-poc\\agent-step-1-sk-mcp-csharp\\bin\\Debug\\net9.0\\agent-step-1-sk-mcp-csharp.exe",
+                Arguments = Array.Empty<string>()
+            }));
 
         // Retrieve tools
         var step1Tools = await mcpClientStep1.ListToolsAsync().ConfigureAwait(false);
 
-        var result = new StringBuilder();
+        
         result.AppendLine("Available tools:");
         // Log the available tools
         foreach (var tool in step1Tools)
@@ -91,12 +105,7 @@ public static class WorkflowOrchestratorTool
             //Console.WriteLine($"Tool Name: {tool.Name}, Description: {tool.Description}");
         }
 
-        // Check env vars
-
-        result.AppendLine($"AzureOpenAI:Endpoint: {endpoint}" );
-        result.AppendLine($"AzureOpenAI:DeploymentName: {deploymentName}");
-        result.AppendLine($"AzureOpenAI:ApiKey: {apiKey}");
-
+        // Create a Semantic Kernel instance 
         var kernelBuilder = Kernel.CreateBuilder();
         kernelBuilder.Services
             .AddLogging(c =>
@@ -136,7 +145,7 @@ public static class WorkflowOrchestratorTool
         // 2.
 
         // Using a prompt to make a question about the content returned by Step1Tools.ExecuteStep1
-        var promptQA = "Answer questions about content returned by the tool Step1Tools.ExecuteStep1. Who was the protagonist?";
+        var promptQA = "Answer questions about content returned by the tool Step1Tools.ExecuteStep1. What's the name of the Job Position?";
         var promptQAResult = await kernel.InvokePromptAsync(promptQA, new(executionSettings)).ConfigureAwait(false);
         result.AppendLine($"Prompt QA: {promptQA}");
         result.AppendLine($"Prompt QA result against Step1Tool: {promptQAResult}");
@@ -149,7 +158,7 @@ public static class WorkflowOrchestratorTool
         ChatCompletionAgent agent = new()
         {
             Instructions = "Answer questions about content returned by the tool Step1Tools.ExecuteStep1.",
-            Name = "QA_Agent_for_Step1Tools.ExecuteStep1", //NAme must not have spaces or will violate the expected pattern.
+            Name = "QA_Agent_for_Step1Tools.ExecuteStep1", //Name must not have spaces or will violate the expected pattern.
             Kernel = kernel,
             Arguments = new KernelArguments(executionSettings),
         };
@@ -160,7 +169,7 @@ public static class WorkflowOrchestratorTool
         try
         {
             // Respond to user input, invoking functions where appropriate.
-            agentResponseItem = await agent.InvokeAsync("Who was the protagonist?").FirstAsync();
+            agentResponseItem = await agent.InvokeAsync("What's the name of the Job Position?").FirstAsync();
             qaAgentResponse = agentResponseItem.Message.ToString(); // Use the Message property to access the content
             //Console.WriteLine($"\n\nResponse from QA Agent:\n{qaAgentResponse}");
         }
