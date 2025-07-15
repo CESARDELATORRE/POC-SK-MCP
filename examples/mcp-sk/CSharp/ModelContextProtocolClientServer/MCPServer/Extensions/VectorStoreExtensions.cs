@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.VectorData;
 
 namespace MCPServer;
@@ -27,28 +28,69 @@ public static class VectorStoreExtensions
     /// <param name="entries">The list of strings to create records from.</param>
     /// <param name="embeddingGenerator">The text embedding generation service.</param>
     /// <param name="createRecord">The delegate which can create a record for each string and its embedding.</param>
+    /// <param name="logger">Optional logger for error reporting.</param>
     /// <returns>The created collection.</returns>
     public static async Task<VectorStoreCollection<TKey, TRecord>> CreateCollectionFromListAsync<TKey, TRecord>(
         this VectorStore vectorStore,
         string collectionName,
         string[] entries,
         IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
-        CreateRecordFromString<TKey, TRecord> createRecord)
+        CreateRecordFromString<TKey, TRecord> createRecord,
+        ILogger? logger = null)
         where TKey : notnull
         where TRecord : class
     {
-        // Get and create collection if it doesn't exist.
-        var collection = vectorStore.GetCollection<TKey, TRecord>(collectionName);
-        await collection.EnsureCollectionExistsAsync().ConfigureAwait(false);
+        ArgumentNullException.ThrowIfNull(vectorStore);
+        ArgumentNullException.ThrowIfNull(collectionName);
+        ArgumentNullException.ThrowIfNull(entries);
+        ArgumentNullException.ThrowIfNull(embeddingGenerator);
+        ArgumentNullException.ThrowIfNull(createRecord);
 
-        // Create records and generate embeddings for them.
-        var tasks = entries.Select(entry => Task.Run(async () =>
+        logger?.LogInformation("Creating vector store collection '{CollectionName}' from {EntryCount} entries", collectionName, entries.Length);
+
+        try
         {
-            var record = createRecord(entry, (await embeddingGenerator.GenerateAsync(entry).ConfigureAwait(false)).Vector);
-            await collection.UpsertAsync(record).ConfigureAwait(false);
-        }));
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+            // Get and create collection if it doesn't exist.
+            var collection = vectorStore.GetCollection<TKey, TRecord>(collectionName);
+            await collection.EnsureCollectionExistsAsync().ConfigureAwait(false);
 
-        return collection;
+            logger?.LogDebug("Vector store collection '{CollectionName}' ensured to exist", collectionName);
+
+            // Create records and generate embeddings for them.
+            var tasks = entries.Select((entry, index) => Task.Run(async () =>
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(entry))
+                    {
+                        logger?.LogWarning("Skipping empty entry at index {Index}", index);
+                        return;
+                    }
+
+                    logger?.LogDebug("Processing entry {Index}: '{Entry}'", index, entry[..Math.Min(entry.Length, 50)]);
+                    
+                    var embedding = await embeddingGenerator.GenerateAsync(entry).ConfigureAwait(false);
+                    var record = createRecord(entry, embedding.Vector);
+                    await collection.UpsertAsync(record).ConfigureAwait(false);
+                    
+                    logger?.LogDebug("Successfully processed entry {Index}", index);
+                }
+                catch (Exception ex)
+                {
+                    logger?.LogError(ex, "Failed to process entry {Index}: '{Entry}'", index, entry);
+                    throw new InvalidOperationException($"Failed to process entry {index}: '{entry[..Math.Min(entry.Length, 50)]}'", ex);
+                }
+            }));
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            
+            logger?.LogInformation("Successfully created vector store collection '{CollectionName}' with {EntryCount} entries", collectionName, entries.Length);
+            return collection;
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, "Failed to create vector store collection '{CollectionName}'", collectionName);
+            throw new InvalidOperationException($"Failed to create vector store collection '{collectionName}'. Please check the connection and try again.", ex);
+        }
     }
 }
