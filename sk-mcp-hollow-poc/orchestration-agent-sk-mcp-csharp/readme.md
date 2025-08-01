@@ -44,9 +44,9 @@ Add a mcp.json file to your global VS Code user config folder with comparable (d
 Folder path (Same path, different syntax):
 
 ```bash
-%APPDATA%\Code\User
-%USERPROFILE%\AppData\Roaming\Code\User
-C:\Users\<YOUR_USER>\AppData\Roaming\Code\User
+%APPDATA%\Code\User\mcp.json
+%USERPROFILE%\AppData\Roaming\Code\User\mcp.json
+C:\Users\<YOUR_USER>\AppData\Roaming\Code\User\mcp.json
 ```
 
 Add the mcp.json file with comparable config.
