@@ -13,11 +13,28 @@ You can do this in two alternative ways.
 
 ### A. At workspace/project level.
 
-======== TBD =======
+Add the mcp.json file within the folder .vscode of your workspace. In this case:
 
-======== TBD =======
+```bash
+YOUR-REPO-PATH/sk-mcp-hollow-poc/.vscode/mcp.json
+```
 
-======== TBD =======
+This is the recommended approach for a development environment, so it uses a relative path to the C# project:
+
+```json
+{
+"servers": {
+    "agent-step-1": {
+      "command": "dotnet",
+      "args": ["run", "--project", "./agent-step-1-sk-mcp-csharp/agent-step-1-sk-mcp-csharp.csproj"],
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+},
+"inputs": []
+}
+```
 
 
 ### B. At global/machine context, available for any workspace in VS Code.
