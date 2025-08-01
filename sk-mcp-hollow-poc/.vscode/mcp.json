@@ -1,0 +1,18 @@
+{
+  "servers": {
+    "agent-step-1": {
+      "command": "dotnet",
+      "args": ["run", "--project", "./agent-step-1-sk-mcp-csharp/agent-step-1-sk-mcp-csharp.csproj"],
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "orchestration-agent": {
+      "command": "dotnet",
+      "args": ["run", "--project", "./orchestration-agent-sk-mcp-csharp/orchestration-agent-sk-mcp-csharp.csproj"],
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

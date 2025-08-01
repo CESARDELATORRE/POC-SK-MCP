@@ -29,7 +29,29 @@ Folder path (Same path, different syntax):
 C:\Users\<YOUR_USER>\AppData\Roaming\Code\User
 ```
 
-Add the mcp.json file with comparable config:
+Add the mcp.json file with comparable config.
+
+This is the recommended approach for a development environment, so it uses a relative path to the C# project:
+
+```json
+
+{
+    "servers": {
+        "orchestration-agent": {
+            "command": "dotnet",
+            "args": ["run", "--project", "./orchestration-agent-sk-mcp-csharp/orchestration-agent-sk-mcp-csharp.csproj"],
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        }
+    },
+    "inputs": []
+}
+
+
+```
+
+This other approach is not recommended as it uses a specific full path to the executable:
 
 ```json
 {

@@ -34,6 +34,24 @@ Folder path (Same path, different syntax):
 
 Add the mcp.json file with comparable config:
 
+This is the recommended approach for a development environment, so it uses a relative path to the C# project:
+
+```json
+{
+"servers": {
+    "agent-step-1": {
+      "command": "dotnet",
+      "args": ["run", "--project", "./agent-step-1-sk-mcp-csharp/agent-step-1-sk-mcp-csharp.csproj"],
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+},
+"inputs": []
+}
+```
+
+This other approach is not recommended as it uses a specific full path to the executable:
 
 ```json
 {
