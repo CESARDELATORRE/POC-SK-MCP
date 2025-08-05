@@ -5,10 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-        "name": ".NET Core Attach",
-        "type": "coreclr",
-        "request": "attach",
-        "processId": "${command:pickProcess}"
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/agent-step-1-sk-mcp-csharp/bin/Debug/net9.0/agent-step-1-sk-mcp-csharp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/agent-step-1-sk-mcp-csharp",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "Debug Tests",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-tests",
+            "program": "dotnet",
+            "args": ["test", "${workspaceFolder}/agent-step-1-sk-mcp-csharp.Tests", "--logger", "console;verbosity=detailed"],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }

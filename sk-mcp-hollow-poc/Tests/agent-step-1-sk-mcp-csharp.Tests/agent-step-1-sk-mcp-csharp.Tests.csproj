@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>agent_step_1_sk_mcp_csharp.Tests</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\agent-step-1-sk-mcp-csharp\agent-step-1-sk-mcp-csharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TestData\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- Copy data files to match the relative path expected by the original code -->
+    <None Include="..\..\agent-step-1-sk-mcp-csharp\data\JobDescription.txt">
+      <Link>data\JobDescription.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Create the directory structure that the original code expects -->
+  <Target Name="CreateDataDirectoryStructure" BeforeTargets="CopyFilesToOutputDirectory">
+    <MakeDir Directories="$(OutputPath)\..\..\..\data" />
+    <Copy SourceFiles="..\..\agent-step-1-sk-mcp-csharp\data\JobDescription.txt" 
+          DestinationFiles="$(OutputPath)\..\..\..\data\JobDescription.txt" 
+          SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
